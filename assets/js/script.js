@@ -14,11 +14,21 @@ if (menuToggle && navMenu) {
             return;
         }
 
-        navMenu.style.top = `${navbar.offsetHeight}px`;
+        document.documentElement.style.setProperty('--mobile-nav-offset', `${navbar.offsetHeight}px`);
     };
 
     syncMobileMenuOffset();
-    window.addEventListener('resize', syncMobileMenuOffset);
+    let resizeRaf = null;
+    window.addEventListener('resize', () => {
+        if (resizeRaf !== null) {
+            cancelAnimationFrame(resizeRaf);
+        }
+
+        resizeRaf = requestAnimationFrame(() => {
+            syncMobileMenuOffset();
+            resizeRaf = null;
+        });
+    });
 
     menuToggle.addEventListener('click', () => {
         const isOpen = navMenu.classList.toggle('active');
@@ -156,9 +166,15 @@ function showFormStatus(message, type = 'info') {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-        if (href !== '#' && document.querySelector(href)) {
+        if (href !== '#') {
+            const targetId = href.slice(1);
+            const element = document.getElementById(targetId);
+
+            if (!element) {
+                return;
+            }
+
             e.preventDefault();
-            const element = document.querySelector(href);
             element.scrollIntoView({
                 behavior: prefersReducedMotion ? 'auto' : 'smooth',
                 block: 'start'
@@ -209,6 +225,3 @@ if (!prefersReducedMotion) {
     `;
     document.head.appendChild(style);
 }
-
-// Log initialization
-console.log('✨ Portfolio website loaded successfully!');
