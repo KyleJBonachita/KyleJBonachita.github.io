@@ -5,51 +5,104 @@
 // Mobile Menu Toggle
 const menuToggle = document.getElementById('menuToggle');
 const navMenu = document.getElementById('navMenu');
+const navbar = document.querySelector('.navbar');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-menuToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
+if (menuToggle && navMenu) {
+    const syncMobileMenuOffset = () => {
+        if (!navbar) {
+            return;
+        }
+
+        navMenu.style.top = `${navbar.offsetHeight}px`;
+    };
+
+    syncMobileMenuOffset();
+    window.addEventListener('resize', syncMobileMenuOffset);
+
+    menuToggle.addEventListener('click', () => {
+        const isOpen = navMenu.classList.toggle('active');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.focus();
+        }
+    });
+}
 
 // Close menu when link is clicked
 const navLinks = document.querySelectorAll('.nav-link');
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+        if (navMenu && menuToggle) {
+            navMenu.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+        }
     });
 });
 
 // Contact Form Handling
 const contactForm = document.getElementById('contactForm');
 const formStatus = document.getElementById('formStatus');
+const submitButton = contactForm ? contactForm.querySelector('button[type="submit"]') : null;
 
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+if (contactForm && formStatus) {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    // Get form values
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const subject = document.getElementById('subject').value.trim();
-    const message = document.getElementById('message').value.trim();
+        // Get form values
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const subject = document.getElementById('subject').value.trim();
+        const message = document.getElementById('message').value.trim();
 
-    // Validate form
-    if (!validateForm(name, email, subject, message)) {
-        return;
-    }
+        // Validate form
+        if (!validateForm(name, email, subject, message)) {
+            return;
+        }
 
-    // Show sending status
-    showFormStatus('Sending your message...', 'info');
+        // Show sending status
+        showFormStatus('Sending your message...', 'info');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+        }
 
-    // Simulate form submission (replace with actual backend in production)
-    setTimeout(() => {
-        showFormStatus('Message sent successfully! I\'ll get back to you soon.', 'success');
-        contactForm.reset();
+        try {
+            const formData = new FormData(contactForm);
+            const response = await fetch(contactForm.action, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json'
+                },
+                body: formData
+            });
 
-        // Hide message after 5 seconds
-        setTimeout(() => {
-            formStatus.classList.remove('show');
-        }, 5000);
-    }, 1000);
-});
+            if (!response.ok) {
+                throw new Error('Form submission failed.');
+            }
+
+            showFormStatus('Message sent successfully! I\'ll get back to you soon.', 'success');
+            contactForm.reset();
+        } catch (error) {
+            showFormStatus('Unable to send right now. You can contact me directly at kylejosefbonachita@gmail.com.', 'error');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Send Message';
+            }
+
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                formStatus.classList.remove('show');
+            }, 5000);
+        }
+    });
+}
 
 /**
  * Validate contact form
@@ -91,6 +144,10 @@ function validateForm(name, email, subject, message) {
  * @param {string} type - 'success', 'error', or 'info'
  */
 function showFormStatus(message, type = 'info') {
+    if (!formStatus) {
+        return;
+    }
+
     formStatus.textContent = message;
     formStatus.className = `form-status show ${type}`;
 }
@@ -103,7 +160,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             e.preventDefault();
             const element = document.querySelector(href);
             element.scrollIntoView({
-                behavior: 'smooth',
+                behavior: prefersReducedMotion ? 'auto' : 'smooth',
                 block: 'start'
             });
         }
@@ -116,35 +173,42 @@ const observerOptions = {
     rootMargin: '0px 0px -100px 0px'
 };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animation = 'fadeInUp 0.6s ease-in-out';
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
+let observer = null;
+if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'fadeInUp 0.6s ease-in-out';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+}
 
 // Observe elements
-document.querySelectorAll('.project-card, .skill-group, .highlight-card, .tech-card').forEach(el => {
-    observer.observe(el);
-});
+if (observer) {
+    document.querySelectorAll('.project-card, .skill-group, .highlight-card, .tech-card').forEach(el => {
+        observer.observe(el);
+    });
+}
 
 // Add animation styles dynamically
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+if (!prefersReducedMotion) {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-`;
-document.head.appendChild(style);
+    `;
+    document.head.appendChild(style);
+}
 
 // Log initialization
 console.log('✨ Portfolio website loaded successfully!');
