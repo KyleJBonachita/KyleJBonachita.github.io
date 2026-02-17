@@ -44,6 +44,17 @@ if (menuToggle && navMenu) {
     });
 }
 
+// Navbar micro animation on scroll
+if (navbar) {
+    const syncNavbarState = () => {
+        const hasScrolled = window.scrollY > 24;
+        navbar.classList.toggle('navbar-scrolled', hasScrolled);
+    };
+
+    syncNavbarState();
+    window.addEventListener('scroll', syncNavbarState, { passive: true });
+}
+
 // Close menu when link is clicked
 const navLinks = document.querySelectorAll('.nav-link');
 navLinks.forEach(link => {
@@ -185,6 +196,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Expandable cards and timeline items
 const expandToggles = document.querySelectorAll('.expand-toggle');
+const projectCards = document.querySelectorAll('.project-card');
 
 const syncExpandedHeights = () => {
     document.querySelectorAll('.expandable.is-expanded .expand-content').forEach(content => {
@@ -217,6 +229,53 @@ window.addEventListener('resize', () => {
 
     syncExpandedHeights();
 });
+
+// Project cards micro-animations on scroll + pointer movement
+if (!prefersReducedMotion && projectCards.length > 0) {
+    projectCards.forEach(card => {
+        card.classList.add('is-scroll-primed');
+    });
+
+    if ('IntersectionObserver' in window) {
+        const projectObserver = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                entry.target.classList.add('is-scroll-in');
+                obs.unobserve(entry.target);
+            });
+        }, {
+            threshold: 0.2,
+            rootMargin: '0px 0px -60px 0px'
+        });
+
+        projectCards.forEach(card => {
+            projectObserver.observe(card);
+        });
+    } else {
+        projectCards.forEach(card => card.classList.add('is-scroll-in'));
+    }
+
+    projectCards.forEach(card => {
+        card.addEventListener('pointermove', (event) => {
+            const rect = card.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const rotateY = ((x / rect.width) - 0.5) * 3.5;
+            const rotateX = (0.5 - (y / rect.height)) * 2.5;
+
+            card.style.transform = `translateY(-8px) scale(1.01) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+            card.classList.add('card-tilt');
+        });
+
+        card.addEventListener('pointerleave', () => {
+            card.style.transform = '';
+            card.classList.remove('card-tilt');
+        });
+    });
+}
 
 // Animate elements on scroll
 const observerOptions = {
