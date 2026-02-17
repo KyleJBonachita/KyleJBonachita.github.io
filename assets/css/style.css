@@ -504,6 +504,16 @@ a:hover {
     z-index: 1000;
     box-shadow: var(--shadow-sm);
     backdrop-filter: blur(12px);
+    transition: box-shadow var(--duration-normal) var(--ease-standard),
+      border-color var(--duration-normal) var(--ease-standard),
+      background-color var(--duration-normal) var(--ease-standard),
+      transform var(--duration-normal) var(--ease-standard);
+}
+
+.navbar.navbar-scrolled {
+    box-shadow: var(--shadow-lg);
+    border-bottom-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+    transform: translateY(0);
 }
 
 .nav-content {
@@ -924,12 +934,27 @@ section > .container {
     flex-direction: column;
     box-shadow: var(--shadow-sm);
     position: relative;
+    will-change: transform, box-shadow;
+}
+
+.project-card.is-scroll-primed {
+    opacity: 0.82;
+    transform: translateY(14px) scale(0.985);
+}
+
+.project-card.is-scroll-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .project-card:hover {
     border-color: var(--color-primary);
     box-shadow: var(--shadow-lg);
     transform: translateY(-10px) scale(1.01);
+}
+
+.project-card.card-tilt {
+    box-shadow: 0 16px 35px rgba(var(--color-slate-900-rgb), 0.14);
 }
 
 .project-image {
@@ -1613,4 +1638,14 @@ section > .container {
     .heart {
       animation: none !important;
     }
+
+        .project-card,
+        .project-card.is-scroll-primed,
+        .project-card.is-scroll-in,
+        .project-card.card-tilt,
+        .navbar,
+        .navbar.navbar-scrolled {
+            transform: none !important;
+            opacity: 1 !important;
+        }
   }
