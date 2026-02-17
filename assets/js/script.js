@@ -183,6 +183,41 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Expandable cards and timeline items
+const expandToggles = document.querySelectorAll('.expand-toggle');
+
+const syncExpandedHeights = () => {
+    document.querySelectorAll('.expandable.is-expanded .expand-content').forEach(content => {
+        content.style.maxHeight = `${content.scrollHeight}px`;
+    });
+};
+
+expandToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+        const expandable = toggle.closest('.expandable');
+        if (!expandable) {
+            return;
+        }
+
+        const content = expandable.querySelector('.expand-content');
+        const isExpanded = expandable.classList.toggle('is-expanded');
+        toggle.setAttribute('aria-expanded', String(isExpanded));
+
+        if (content) {
+            content.setAttribute('aria-hidden', String(!isExpanded));
+            content.style.maxHeight = isExpanded ? `${content.scrollHeight}px` : '0px';
+        }
+    });
+});
+
+window.addEventListener('resize', () => {
+    if (prefersReducedMotion) {
+        return;
+    }
+
+    syncExpandedHeights();
+});
+
 // Animate elements on scroll
 const observerOptions = {
     threshold: 0.1,
@@ -203,9 +238,13 @@ if (!prefersReducedMotion && 'IntersectionObserver' in window) {
 
 // Observe elements
 if (observer) {
-    document.querySelectorAll('.project-card, .skill-group, .highlight-card, .tech-card').forEach(el => {
-        observer.observe(el);
-    });
+    document
+        .querySelectorAll(
+            '.project-card, .skill-group, .highlight-card, .tech-card, .timeline-content, .contact-form, .contact-info'
+        )
+        .forEach(el => {
+            observer.observe(el);
+        });
 }
 
 // Add animation styles dynamically
