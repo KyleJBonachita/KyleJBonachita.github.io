@@ -1,0 +1,49 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A0F14"/>
+      <stop offset="1" stop-color="#101A26"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#142131"/>
+      <stop offset="1" stop-color="#0F1824"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#88D300"/>
+      <stop offset="1" stop-color="#76B900"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <circle cx="130" cy="95" r="180" fill="#76B900" fill-opacity="0.16"/>
+  <circle cx="1130" cy="70" r="210" fill="#76B900" fill-opacity="0.11"/>
+  <circle cx="640" cy="760" r="270" fill="#76B900" fill-opacity="0.12"/>
+
+  <rect x="104" y="76" width="992" height="568" rx="22" fill="url(#card)" stroke="#2A3A4F" stroke-width="2"/>
+
+  <rect x="140" y="118" width="250" height="44" rx="10" fill="url(#chip)"/>
+  <text x="165" y="147" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">NVIDIA Session Hub</text>
+
+  <text x="140" y="198" fill="#B6C4D2" font-family="Segoe UI, Arial, sans-serif" font-size="18">Production intake for GR00T robotics operations</text>
+
+  <rect x="140" y="228" width="436" height="162" rx="14" fill="#111C2A" stroke="#2A3A4F"/>
+  <text x="166" y="264" fill="#E6EDF5" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600">Operator Session Details</text>
+  <rect x="166" y="283" width="384" height="18" rx="6" fill="#1D2B3B"/>
+  <rect x="166" y="313" width="290" height="18" rx="6" fill="#1D2B3B"/>
+  <rect x="166" y="343" width="340" height="18" rx="6" fill="#1D2B3B"/>
+
+  <rect x="602" y="228" width="458" height="162" rx="14" fill="#111C2A" stroke="#2A3A4F"/>
+  <text x="628" y="264" fill="#E6EDF5" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600">Validated Pipeline Outputs</text>
+  <rect x="628" y="283" width="406" height="18" rx="6" fill="#1D2B3B"/>
+  <rect x="628" y="313" width="332" height="18" rx="6" fill="#1D2B3B"/>
+  <rect x="628" y="343" width="376" height="18" rx="6" fill="#1D2B3B"/>
+
+  <rect x="140" y="418" width="920" height="66" rx="14" fill="#0E1622" stroke="#2A3A4F"/>
+  <text x="166" y="460" fill="#D8E6C0" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600">Consistency • Traceability • Faster Session Handoffs</text>
+
+  <rect x="140" y="512" width="280" height="56" rx="12" fill="url(#chip)"/>
+  <text x="190" y="548" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Submit Session</text>
+
+  <rect x="438" y="512" width="260" height="56" rx="12" fill="#1A2636" stroke="#2A3A4F"/>
+  <text x="500" y="548" fill="#E6EDF5" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="600">Track Output</text>
+</svg>
